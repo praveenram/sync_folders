@@ -1,9 +1,12 @@
----
 language: python
 python:
-    - "3.6"
+- '3.6'
 install:
-    - pip install -r requirements.txt
+- pip install -r requirements.txt
 script:
-    - nosetests
-    - pylint **/*.py sync_folders .
+- nosetests
+- pylint **/*.py sync_folders .
+notifications:
+  email: false
+  slack:
+    secure: Fx/oTfdkWYAIg9xVLRynwtDCIekoJENbzV/POmHerrffJ2taKcg9T6UuVvHKWK7B24kMUqssbAEu3IymtCtNuSR2jXGp5aTLA/GAHTciKA8+bgFxHBMpcOcq/NfAK0qx0ahQwmg65racc1ads8dNo9k8NkLA8D5B6eU8CgECBBeKFA0dvho2bYaE6g9HsdvzStUsl4EuLkh8VX0fNuMaOxE0IfyL9kQAWZNJHtUpuXRTBT86C6VMzfHQijCvL6E8i5Fe78pLO2o5n2uAz2l1VjXbD2xFSnCZS/eU6+ifotTFqz4Zk7dsWH3BO1y0LdthXnRG/ydU3eFJUP8LGtWeM4OmnPbiV+hDJ2g09UnshfownyuL6ssdR+srKTYuuxz4WFli41+J9T6M65MR4+dn+jdCkrk8lri4jxXe4RfkKc/vFeT0dtrhA44P6NHGggyHmbeHTL8yUi+2Rl+6KFjTmVdreA6nWQa+nPBJi2QDCz/Ki20O2YUA+K+o1v649SGFytSEr/E0UJRlSaatBUqhBcYUteRM+YGUHEZdy3/afvDqq56yv/0tjPWYHMZ4rw8gTAF5zFdH22o3yB6140mSM0FjAQVpD5gAGD83I3Yf7Zat1HZsWG/DtN35npYquGgV6taRXMQ8pe1be+XvgTa/4H3Zi3Hl4FHxYo3Ok1CIbj8=
