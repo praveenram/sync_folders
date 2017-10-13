@@ -1,1 +1,0 @@
-# Source file for sync folders

@@ -1,2 +1,1 @@
-# Sync Folders
-''' Sync Folders Module '''
+''' Sync Folders - Public Module '''
