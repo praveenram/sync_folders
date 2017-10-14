@@ -11,3 +11,8 @@ def setup_tmp_dir():
     os.makedirs(source_dir)
     os.makedirs(destination_dir)
     return tmp_dir, source_dir, destination_dir
+
+def touch(path, time=None):
+    ''' Touch (create / update modified time) for files '''
+    with open(path, 'a'):
+        os.utime(path, time)
