@@ -8,7 +8,8 @@ from nose.tools import assert_equal
 
 from ..folder import summary_json
 
-from .base_test import setup_tmp_dir, touch
+from .base_test import setup_tmp_dir, touch, assert_fixes
+assert_fixes()
 
 class FolderSummaryTest(TestCase):
     ''' Unittest class for folder summary json '''
