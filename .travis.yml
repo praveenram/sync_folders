@@ -4,7 +4,7 @@ python:
 install:
 - pip install -r requirements.txt
 script:
-- pytests -vv
+- pytest -vv
 - pylint sync_folders folder
 notifications:
   email: false
