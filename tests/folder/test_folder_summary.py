@@ -31,14 +31,17 @@ class TestFolderSummary(object):
         [json, children] = folder.summary_json(self.source_dir)
 
         assert json == jsonpickle.encode({
-            'files': [
-                self.file_summary_dict('file_1.pdf'),
-                self.file_summary_dict('file_2.pdf'),
-                self.file_summary_dict('file_3.pdf')
-            ],
-            'folders': [
-                self.file_summary_dict('another_folder')
-            ]
+            'path': self.source_dir,
+            'file_names': ['file_1.pdf', 'file_2.pdf', 'file_3.pdf'],
+            'folder_names': ['another_folder'],
+            'files': {
+                'file_1.pdf': self.file_summary_dict('file_1.pdf'),
+                'file_2.pdf': self.file_summary_dict('file_2.pdf'),
+                'file_3.pdf': self.file_summary_dict('file_3.pdf')
+            },
+            'folders': {
+                'another_folder': self.file_summary_dict('another_folder')
+            }
         })
 
         assert children == [os.path.join(self.source_dir, 'another_folder')]

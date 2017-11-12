@@ -15,19 +15,28 @@ def init_folder(path):
 
 def summary_json(path):
     ''' Generates folder summary for metadata file '''
-    folders, files, child_folders = [], [], []
+    folders, files = {}, {}
+    folder_names, file_names = [], []
+    child_folders = []
     for entry in os.listdir(path):
         stat = Stat(os.path.join(path, entry))
         if is_directory(stat):
             child_folders.append(os.path.join(path, entry))
-            folders.append(entry_dict(entry, stat))
+            folder_names.append(entry)
+            folders[entry] = entry_dict(entry, stat)
         elif is_file(stat):
-            files.append(entry_dict(entry, stat))
+            file_names.append(entry)
+            files[entry] = entry_dict(entry, stat)
 
-    folders = sorted(folders, key=lambda entry: entry['name'])
-    files = sorted(files, key=lambda entry: entry['name'])
+    summary = jsonpickle.encode({
+        'path': path,
+        'file_names': sorted(file_names),
+        'folder_names': sorted(folder_names),
+        'files': files,
+        'folders': folders
+    })
 
-    return [jsonpickle.encode({'files': files, 'folders': folders}), child_folders]
+    return [summary, child_folders]
 
 def entry_dict(entry_name, stat):
     ''' File/Folder summary entry dict representation '''

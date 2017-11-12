@@ -31,21 +31,27 @@ class TestFolderInit(object):
         folder.init_folder(self.source_dir)
 
         assert open(os.path.join(self.source_dir, '.sync_folders.init')).read() == jsonpickle.encode({
-            'files': [
-                self.file_summary_dict('file_1.pdf'),
-                self.file_summary_dict('file_2.pdf'),
-                self.file_summary_dict('file_3.pdf')
-            ],
-            'folders': [
-                self.file_summary_dict('another_folder')
-            ]
+            'path': self.source_dir,
+            'file_names': ['file_1.pdf', 'file_2.pdf', 'file_3.pdf'],
+            'folder_names': ['another_folder'],
+            'files': {
+                'file_1.pdf': self.file_summary_dict('file_1.pdf'),
+                'file_2.pdf': self.file_summary_dict('file_2.pdf'),
+                'file_3.pdf': self.file_summary_dict('file_3.pdf')
+            },
+            'folders': {
+                'another_folder': self.file_summary_dict('another_folder')
+            }
         })
 
         assert open(os.path.join(self.source_dir, 'another_folder', '.sync_folders.init')).read() == jsonpickle.encode({
-            'folders': [],
-            'files': [
-                self.file_summary_dict('another_file.mp4')
-            ]
+            'path': os.path.join(self.source_dir, 'another_folder'),
+            'file_names': ['another_file.mp4'],
+            'folder_names': [],
+            'files': {
+                'another_file.mp4': self.file_summary_dict('another_file.mp4'),
+            },
+            'folders': {}
         })
 
     def file_summary_dict(self, name):

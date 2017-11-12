@@ -28,6 +28,7 @@ def folder_not_exists(path):
 @click.option('--verbose', is_flag=True)
 @click.argument('source', type=click.Path(exists=True), callback=validate_path, nargs=1)
 @click.argument('destination', type=click.Path(), callback=validate_path, nargs=1)
+# pylint: disable=too-many-arguments, unused-argument
 def sync_folders(ignore, source, destination, overwrite, dry_run, verbose):
     """
     Sync the contents of source folder with destination.\n
@@ -42,7 +43,13 @@ def sync_folders(ignore, source, destination, overwrite, dry_run, verbose):
         click.echo('Ignore files matching patterns: [%s]' % ', '.join(ignore))
 
     if overwrite:
-        click.echo(click.style('Warning: Conflicting destination files will be overwritten', bold=True, fg='red'))
+        click.echo(
+            click.style(
+                'Warning: Conflicting destination files will be overwritten',
+                bold=True,
+                fg='red'
+            )
+        )
 
     click.echo('Step 1/4: Generating metadata for %s' % source)
     init_folder(source)
