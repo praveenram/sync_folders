@@ -1,6 +1,5 @@
 ''' Folder Operations Public Interface '''
 import os
-from queue import Queue
 import jsonpickle
 
 from ._os import is_directory, is_file, Stat
@@ -8,12 +7,11 @@ from ._os import is_directory, is_file, Stat
 def init_folder(path):
     ''' Initialize a folder with a metadata file used by sync_folders '''
     folders = [path]
-    while len(folders) > 0:
+    while folders:
         current_path = folders.pop(0)
         [summary, children] = summary_json(current_path)
         open(os.path.join(current_path, '.sync_folders.init'), 'w').write(summary)
         folders.extend(children)
-    pass
 
 def summary_json(path):
     ''' Generates folder summary for metadata file '''
