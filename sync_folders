@@ -3,6 +3,7 @@
 
 import os
 import click
+from folder import init_folder
 
 def validate_path(_, param, value):
     ''' Click argument validator - ensure arguments are directories '''
@@ -21,14 +22,23 @@ def folder_not_exists(path):
     return (not os.path.isfile(path)) and (not os.path.exists(path))
 
 @click.command()
+@click.option('--ignore', '-i', multiple=True, type=str)
 @click.argument('source', type=click.Path(exists=True), callback=validate_path, nargs=1)
 @click.argument('destination', type=click.Path(), callback=validate_path, nargs=1)
-def sync_folders(source, destination):
+def sync_folders(ignore, source, destination):
     """
     Sync the contents of source folder with destination.
     Essentially - backup the source to the destination.
     """
     click.echo('Syncing %s to %s' % (source, destination))
+
+    if ignore:
+        click.echo('Ignore files matching patterns: [%s]' % ', '.join(ignore))
+
+    click.echo('Step 1/4: Generating metadata for %s' % source)
+    init_folder(source)
+    click.echo('Step 2/4: Generating metadata for %s' % destination)
+    init_folder(destination)
 
 if __name__ == '__main__':
     sync_folders() # pylint: disable=no-value-for-parameter
