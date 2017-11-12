@@ -25,9 +25,10 @@ def folder_not_exists(path):
 @click.option('--dry-run', is_flag=True)
 @click.option('--overwrite/--no-overwrite', ' /-O', default=True)
 @click.option('--ignore', '-i', multiple=True, type=str)
+@click.option('--verbose', is_flag=True)
 @click.argument('source', type=click.Path(exists=True), callback=validate_path, nargs=1)
 @click.argument('destination', type=click.Path(), callback=validate_path, nargs=1)
-def sync_folders(ignore, source, destination, overwrite, dry_run):
+def sync_folders(ignore, source, destination, overwrite, dry_run, verbose):
     """
     Sync the contents of source folder with destination.\n
     Essentially - backup the source to the destination.
