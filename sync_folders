@@ -43,12 +43,10 @@ def sync_folders(ignore, source, destination, overwrite, dry_run, verbose):
         click.echo('Ignore files matching patterns: [%s]' % ', '.join(ignore))
 
     if overwrite:
-        click.echo(
-            click.style(
-                'Warning: Conflicting destination files will be overwritten',
-                bold=True,
-                fg='red'
-            )
+        click.secho(
+            'Warning: Conflicting destination files will be overwritten',
+            bold=True,
+            fg='red'
         )
 
     click.echo('Step 1/4: Generating metadata for %s' % source)
