@@ -22,18 +22,26 @@ def folder_not_exists(path):
     return (not os.path.isfile(path)) and (not os.path.exists(path))
 
 @click.command()
+@click.option('--dry-run', is_flag=True)
+@click.option('--overwrite/--no-overwrite', ' /-O', default=True)
 @click.option('--ignore', '-i', multiple=True, type=str)
 @click.argument('source', type=click.Path(exists=True), callback=validate_path, nargs=1)
 @click.argument('destination', type=click.Path(), callback=validate_path, nargs=1)
-def sync_folders(ignore, source, destination):
+def sync_folders(ignore, source, destination, overwrite, dry_run):
     """
-    Sync the contents of source folder with destination.
+    Sync the contents of source folder with destination.\n
     Essentially - backup the source to the destination.
     """
+    if dry_run:
+        click.echo(click.style('### Dry Run ###', fg='yellow', bold=True))
+
     click.echo('Syncing %s to %s' % (source, destination))
 
     if ignore:
         click.echo('Ignore files matching patterns: [%s]' % ', '.join(ignore))
+
+    if overwrite:
+        click.echo(click.style('Warning: Conflicting destination files will be overwritten', bold=True, fg='red'))
 
     click.echo('Step 1/4: Generating metadata for %s' % source)
     init_folder(source)
