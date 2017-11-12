@@ -1,25 +1,29 @@
 ''' Folder Operations Public Interface '''
-from stat import S_ISDIR, S_ISREG
-import os
+from ._os import *
 import jsonpickle
 
 def summary_json(path):
     ''' Initialize a folder with metadata used by sync_folders '''
     folders, files = [], []
     for entry in os.listdir(path):
-        stat = os.stat(os.path.join(path, entry))
-        if S_ISDIR(stat.st_mode):
+        stat = Stat(os.path.join(path, entry))
+        if is_directory(stat):
             folders.append(entry_dict(entry, stat))
-        elif S_ISREG(stat.st_mode):
+        elif is_file(stat):
             files.append(entry_dict(entry, stat))
+
+    folders = sorted(folders, key=lambda entry: entry['name'])
+    files = sorted(files, key=lambda entry: entry['name'])
+
     return jsonpickle.encode({'files': files, 'folders': folders})
 
 def entry_dict(entry_name, stat):
     ''' File summary entry dict representation '''
+    timestamps = stat.timestamps
     return {
         'name': entry_name,
-        'size': stat.st_size,
-        'created_at': int(stat.st_ctime),
-        'updated_at': int(stat.st_mtime),
-        'last_access_time': int(stat.st_atime),
+        'size': stat.size,
+        'created_at': int(timestamps[0]),
+        'updated_at': int(timestamps[1]),
+        'last_access_time': int(timestamps[2]),
     }
