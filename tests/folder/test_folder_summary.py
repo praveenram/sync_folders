@@ -1,4 +1,4 @@
-''' Unit tests for folder init_folder '''
+''' Unit tests for folder summary_json '''
 import os
 from time import time
 import pytest
@@ -12,7 +12,7 @@ from folder._os import Stat
 
 from ..base_test import setup_tmp_dir, touch
 
-class TestFolderInit(object):
+class TestFolderSummary(object):
     def setup_method(self, method):
         self.tmp_dir, self.source_dir, self.destination_dir = setup_tmp_dir()
         touch(os.path.join(self.source_dir, 'file_1.pdf'))
@@ -24,13 +24,13 @@ class TestFolderInit(object):
     def teardown_method(self, method):
         shutil.rmtree(self.tmp_dir)
 
-    def test_successful_folder_init(self, mocker):
+    def test_successful_folder_summary_generation(self, mocker):
         mocker.patch.object(Stat, 'timestamps', [1, 2, 3])
         mocker.patch.object(Stat, 'size', 1024)
 
-        folder.init_folder(self.source_dir)
+        [json, children] = folder.summary_json(self.source_dir)
 
-        assert open(os.path.join(self.source_dir, '.sync_folders.init')).read() == jsonpickle.encode({
+        assert json == jsonpickle.encode({
             'files': [
                 self.file_summary_dict('file_1.pdf'),
                 self.file_summary_dict('file_2.pdf'),
@@ -41,12 +41,7 @@ class TestFolderInit(object):
             ]
         })
 
-        assert open(os.path.join(self.source_dir, 'another_folder', '.sync_folders.init')).read() == jsonpickle.encode({
-            'folders': [],
-            'files': [
-                self.file_summary_dict('another_file.mp4')
-            ]
-        })
+        assert children == [os.path.join(self.source_dir, 'another_folder')]
 
     def file_summary_dict(self, name):
         ''' File summary representation '''
