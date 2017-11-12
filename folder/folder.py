@@ -1,6 +1,7 @@
 ''' Folder Operations Public Interface '''
-from ._os import *
+import os
 import jsonpickle
+from ._os import is_directory, is_file, Stat
 
 def summary_json(path):
     ''' Initialize a folder with metadata used by sync_folders '''

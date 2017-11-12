@@ -4,8 +4,8 @@ python:
 install:
 - pip install -r requirements.txt
 script:
-- nosetests
-- pylint **/*.py sync_folders .
+- pytests -vv
+- pylint sync_folders folder
 notifications:
   email: false
   slack:

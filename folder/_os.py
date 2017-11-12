@@ -1,3 +1,5 @@
+''' Wrapper methods for os functions '''
+
 from stat import S_ISDIR, S_ISREG
 import os
 
