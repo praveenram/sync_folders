@@ -28,9 +28,9 @@ class TestFolderSummary(object):
         mocker.patch.object(Stat, 'timestamps', [1, 2, 3])
         mocker.patch.object(Stat, 'size', 1024)
 
-        [json, children] = folder.summary_json(self.source_dir)
+        [json_string, children] = folder.summary_json(self.source_dir)
 
-        assert json == jsonpickle.encode({
+        assert json_string == jsonpickle.encode({
             'path': self.source_dir,
             'file_names': ['file_1.pdf', 'file_2.pdf', 'file_3.pdf'],
             'folder_names': ['another_folder'],
@@ -45,6 +45,15 @@ class TestFolderSummary(object):
         })
 
         assert children == [os.path.join(self.source_dir, 'another_folder')]
+
+    def test_ignore_init_file_during_folder_summary_generation(self, mocker):
+        mocker.patch.object(Stat, 'timestamps', [1, 2, 3])
+        mocker.patch.object(Stat, 'size', 1024)
+        touch(os.path.join(self.source_dir, '.sync_folders.init'))
+
+        [json_string, children] = folder.summary_json(self.source_dir)
+
+        assert json_string.find('.sync_folders.init') == -1
 
     def file_summary_dict(self, name):
         ''' File summary representation '''

@@ -19,6 +19,8 @@ def summary_json(path):
     folder_names, file_names = [], []
     child_folders = []
     for entry in os.listdir(path):
+        if entry == '.sync_folders.init':
+            continue
         stat = Stat(os.path.join(path, entry))
         if is_directory(stat):
             child_folders.append(os.path.join(path, entry))
