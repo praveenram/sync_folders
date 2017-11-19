@@ -1,6 +1,5 @@
 ''' Compare two folders and generate the diff of file tranfers required '''
 import os
-
 from folder import get_summary
 
 def _initialize_sets(summary_dict):
@@ -19,8 +18,11 @@ class FolderCompare(object):
         _initialize_sets(self.source_json)
         _initialize_sets(self.destination_json)
 
-    def compute_diff(self):
+    def compute_diff(self, verbose=False):
         ''' Recursively find the files / folders to copy and delete b/w source and destination '''
+        if verbose:
+            print('Processing %s' % self.source_dir)
+
         files_to_copy = self.new_files() + self.modified_files()
         new_folders = self.new_folders()
         existing_folders = self.source_json['folder_names_set'].difference(new_folders)

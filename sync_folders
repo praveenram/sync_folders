@@ -2,9 +2,10 @@
 ''' Command Line Interface - Sync Folders '''
 
 import os
+from timeit import default_timer as timer
 import click
 from folder import init_folder
-from sync_folders import FolderCompare
+from compare import FolderCompare
 
 def validate_path(_, param, value):
     ''' Click argument validator - ensure arguments are directories '''
@@ -29,14 +30,14 @@ def folder_not_exists(path):
 @click.option('--verbose', is_flag=True)
 @click.argument('source', type=click.Path(exists=True), callback=validate_path, nargs=1)
 @click.argument('destination', type=click.Path(), callback=validate_path, nargs=1)
-# pylint: disable=too-many-arguments, unused-argument
+# pylint: disable=too-many-arguments
 def sync_folders(ignore, source, destination, overwrite, dry_run, verbose):
     """
     Sync the contents of source folder with destination.\n
     Essentially - backup the source to the destination.
     """
     if dry_run:
-        click.echo(click.style('### Dry Run ###', fg='yellow', bold=True))
+        click.secho('### Dry Run ###', fg='yellow', bold=True)
 
     click.echo('Syncing %s to %s' % (source, destination))
 
@@ -51,11 +52,23 @@ def sync_folders(ignore, source, destination, overwrite, dry_run, verbose):
         )
 
     click.echo('Step 1/4: Generating metadata for %s' % source)
+    start = timer()
     init_folder(source)
+    end = timer()
+    click.secho('Took %f seconds.' % (end - start), fg='yellow')
+
     click.echo('Step 2/4: Generating metadata for %s' % destination)
+    start = timer()
     init_folder(destination)
+    end = timer()
+    click.secho('Took %f seconds.' % (end - start), fg='yellow')
+
     click.echo('Step 3/4: Computing diff between %s and %s' % (source, destination))
-    FolderCompare(source, destination)
+    start = timer()
+    compare = FolderCompare(source, destination)
+    compare.compute_diff(verbose=verbose)
+    end = timer()
+    click.secho('Took %f seconds.' % (end - start), fg='yellow')
 
 if __name__ == '__main__':
     sync_folders() # pylint: disable=no-value-for-parameter
