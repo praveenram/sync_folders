@@ -51,6 +51,13 @@ class TestFolderCompare(object):
         assert { 'from': '/tmp/source/path/file_2.pdf', 'to': '/tmp/destination/path/file_2.pdf'}  in diff['copy']
         assert { 'from': '/tmp/source/path/file_3.pdf', 'to': '/tmp/destination/path/file_3.pdf'}  in diff['copy']
 
+    def test_copy_folder_if_destination_does_not_have_folder(self):
+        compare = FolderCompare('/tmp/source/path', '/tmp/destination/path')
+
+        diff = compare.compute_diff()
+
+        assert { 'from': '/tmp/source/path/another_folder', 'to': '/tmp/destination/path/another_folder'} in diff['copy']
+
     def _file_summary_dict(self, name):
         ''' File summary representation '''
         return {
