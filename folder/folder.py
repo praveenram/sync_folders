@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import jsonpickle
 
-from ._os import is_directory, is_file, Stat
+from ._os import is_directory, is_file, Stat, valid_symlink
 
 def init_folder(path):
     ''' Initialize a folder with a metadata file used by sync_folders '''
@@ -22,9 +22,12 @@ def summary_json(path):
     for entry in os.listdir(path):
         if entry == '.sync_folders.init':
             continue
-        stat = Stat(os.path.join(path, entry))
+        entry_path = os.path.join(path, entry)
+        if os.path.islink(entry_path) and (not valid_symlink(entry_path)):
+            continue
+        stat = Stat(entry_path)
         if is_directory(stat):
-            child_folders.append(os.path.join(path, entry))
+            child_folders.append(entry_path)
             folder_names.append(entry)
             folders[entry] = entry_dict(entry, stat)
         elif is_file(stat):

@@ -9,6 +9,15 @@ def is_directory(stat):
 def is_file(stat):
     return S_ISREG(stat.mode)
 
+def valid_symlink(path):
+    target_path = os.readlink(path)
+    # Resolve relative symlinks
+    if not os.path.isabs(target_path):
+        target_path = os.path.join(os.path.dirname(path), target_path)
+    if not os.path.exists(target_path):
+        return False
+    return True
+
 class Stat(object):
     def __init__(self, path):
         self.stat = os.stat(path)
