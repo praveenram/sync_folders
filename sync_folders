@@ -4,6 +4,7 @@
 import os
 import click
 from folder import init_folder
+from sync_folders import FolderCompare
 
 def validate_path(_, param, value):
     ''' Click argument validator - ensure arguments are directories '''
@@ -53,6 +54,8 @@ def sync_folders(ignore, source, destination, overwrite, dry_run, verbose):
     init_folder(source)
     click.echo('Step 2/4: Generating metadata for %s' % destination)
     init_folder(destination)
+    click.echo('Step 3/4: Computing diff between %s and %s' % (source, destination))
+    FolderCompare(source, destination)
 
 if __name__ == '__main__':
     sync_folders() # pylint: disable=no-value-for-parameter

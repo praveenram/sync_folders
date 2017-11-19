@@ -14,7 +14,7 @@ install:
 - pip install -r requirements.txt
 script:
 - pytest -vv
-- pylint sync_folders folder
+- pylint sync_folders folder compare
 notifications:
   email: false
   slack:

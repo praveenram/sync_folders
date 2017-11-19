@@ -1,5 +1,6 @@
 ''' Folder Operations Public Interface '''
 import os
+from pathlib import Path
 import jsonpickle
 
 from ._os import is_directory, is_file, Stat
@@ -39,6 +40,14 @@ def summary_json(path):
     })
 
     return [summary, child_folders]
+
+def get_summary(path):
+    summary_file = Path(os.path.join(path, '.sync_folders.init'))
+    if not summary_file.exists():
+        print('Initializing folder %s' % path)
+        init_folder(path)
+
+    return jsonpickle.decode(''.join(open(str(summary_file), 'r').readlines()))
 
 def entry_dict(entry_name, stat):
     ''' File/Folder summary entry dict representation '''
