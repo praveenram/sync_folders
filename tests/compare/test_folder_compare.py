@@ -13,12 +13,13 @@ class TestFolderCompare(object):
     def setup_method(self, method):
         self.source_folder_json = {
             'path': '/tmp/source/path',
-            'file_names': ['file_1.pdf', 'file_2.pdf', 'file_3.pdf'],
+            'file_names': ['file_1.pdf', 'file_2.pdf', 'file_3.pdf', 'existing_file.jpeg'],
             'folder_names': ['another_folder', 'folder_2'],
             'files': {
                 'file_1.pdf': self._file_summary_dict('file_1.pdf'),
                 'file_2.pdf': self._file_summary_dict('file_2.pdf'),
-                'file_3.pdf': self._file_summary_dict('file_3.pdf')
+                'file_3.pdf': self._file_summary_dict('file_3.pdf'),
+                'existing_file.jpeg': self._file_summary_dict('existing_file.jpeg', size=2048)
             },
             'folders': {
                 'another_folder': self._file_summary_dict('another_folder'),
@@ -36,10 +37,12 @@ class TestFolderCompare(object):
         }
         self.folder_2_json = {
             'path': '/tmp/source/path/folder_2',
-            'file_names': ['file.docx'],
+            'file_names': ['file.docx', 'existing_file.psd', 'not_changed.txt'],
             'folder_names': [],
             'files': {
-                'file.docx': self._file_summary_dict('file.docx')
+                'file.docx': self._file_summary_dict('file.docx'),
+                'existing_file.psd': self._file_summary_dict('existing_file.psd', size=2048),
+                'not_changed.txt': self._file_summary_dict('not_changed.txt')
             },
             'folders': {}
         }
@@ -51,10 +54,11 @@ class TestFolderCompare(object):
 
         self.destination_folder_json = {
             'path': '/tmp/destination/path',
-            'file_names': ['not_in_src.pptx'],
+            'file_names': ['not_in_src.pptx', 'existing_file.jpeg'],
             'folder_names': ['folder_2', 'folder_to_delete'],
             'files': {
-                'not_in_src.pptx': self._file_summary_dict('not_in_src.pptx')
+                'not_in_src.pptx': self._file_summary_dict('not_in_src.pptx'),
+                'existing_file.jpeg': self._file_summary_dict('existing_file.jpeg')
             },
             'folders': {
                 'folder_2': self._file_summary_dict('folder_2'),
@@ -63,10 +67,12 @@ class TestFolderCompare(object):
         }
         self.dest_folder_2_json = {
             'path': '/tmp/destination/path/folder_2',
-            'file_names': ['not_in_src.mov'],
+            'file_names': ['not_in_src.mov', 'existing_file.psd', 'not_changed.txt'],
             'folder_names': [],
             'files': {
-                'not_in_src.mov': self._file_summary_dict('not_in_src.mov')
+                'not_in_src.mov': self._file_summary_dict('not_in_src.mov'),
+                'existing_file.psd': self._file_summary_dict('existing_file.psd'),
+                'not_changed.txt': self._file_summary_dict('not_changed.txt')
             },
             'folders': {}
         }
@@ -112,6 +118,15 @@ class TestFolderCompare(object):
 
         assert {'from': '/tmp/source/path/folder_2/file.docx', 'to': '/tmp/destination/path/folder_2/file.docx'} in diff['copy']
 
+    def test_copy_file_only_if_modified(self):
+        compare = FolderCompare('/tmp/source/path', '/tmp/destination/path')
+
+        diff = compare.compute_diff()
+
+        assert {'from': '/tmp/source/path/existing_file.jpeg', 'to': '/tmp/destination/path/existing_file.jpeg'} in diff['copy']
+        assert {'from': '/tmp/source/path/folder_2/existing_file.psd', 'to': '/tmp/destination/path/folder_2/existing_file.psd'} in diff['copy']
+        assert {'from': '/tmp/source/path/folder_2/not_changed.txt', 'to': '/tmp/destination/path/folder_2/not_changed.txt'} not in diff['copy']
+
     def test_copy_folder_should_not_include_files_in_folder_marked_for_copy(self):
         compare = FolderCompare('/tmp/source/path', '/tmp/destination/path')
 
@@ -140,12 +155,12 @@ class TestFolderCompare(object):
 
         assert '/tmp/destination/path/folder_2/not_in_src.mov' in diff['delete']
 
-    def _file_summary_dict(self, name):
+    def _file_summary_dict(self, name, size=1024):
         ''' File summary representation '''
         return {
             'name': name,
             'updated_at': 2,
             'created_at': 1,
-            'size': 1024,
+            'size': size,
             'last_access_time': 3
         }

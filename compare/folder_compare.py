@@ -21,7 +21,7 @@ class FolderCompare(object):
 
     def compute_diff(self):
         ''' Recursively find the files / folders to copy and delete b/w source and destination '''
-        files_to_copy = self.new_files()
+        files_to_copy = self.new_files() + self.modified_files()
         new_folders = self.new_folders()
         existing_folders = self.source_json['folder_names_set'].difference(new_folders)
 
@@ -74,6 +74,17 @@ class FolderCompare(object):
                 self.source_json['folder_names_set']
             )
         )
+
+    def modified_files(self):
+        _modified_files = []
+        common_files = self.source_json['file_names_set'].intersection(
+            self.destination_json['file_names_set']
+        )
+        for file in common_files:
+            if self.source_json['files'][file] != self.destination_json['files'][file]:
+                _modified_files.append(file)
+
+        return _modified_files
 
     def _to_from_to_dict(self, name):
         from_path = self.source_json['path']
